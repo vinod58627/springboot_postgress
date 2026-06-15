@@ -8,14 +8,18 @@ import com.example.demo.services.OneToOneService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Logger;
+
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/checkoto")
 public class OneToOneController {
-
+    private static final Logger logger = Logger.getLogger(OneToOneController.class.getName());
     @Autowired
     private OneToOneService oneToOneService;
 
@@ -52,6 +56,19 @@ public class OneToOneController {
     public ResponseEntity<String> saveOneToMany(@Valid @RequestBody OneToManySaveDto otmDto) {
         String msg = oneToOneService.saveOtm(otmDto);
         return ResponseEntity.ok().body(msg);
+    }
+
+    @RequestMapping("/profile")
+    public String userProfile(Model model) {
+        model.addAttribute("username", "JohnDoe");
+        logger.info("Vinod Is Calling Logger");
+        return "profile";
+    }
+
+    @GetMapping("/check/{a}divide{b}")
+    public String checkPath(@PathVariable Integer a, @PathVariable Integer b) {
+        Integer c = a + b;
+        return "The Total is " + c;
     }
 
 }

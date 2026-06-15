@@ -16,10 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class OneToOneServiceImpl implements OneToOneService {
-
+    private static final Logger logger = Logger.getLogger(OneToOneServiceImpl.class.getName());
     @Autowired
     private OneToOneRepo oneToOneRepo;
 
@@ -80,6 +81,12 @@ public class OneToOneServiceImpl implements OneToOneService {
     public List<OneToOneResponseDto> getFromQuery() {
 
         List<OneToOneResponseDto> allMembers = oneToOneRepo.dataFromQuery();
+//        allMembers.forEach(member -> {
+//                    logger.info("Members: Name " + member.getName());
+//                    logger.info("Members: Email " + member.getEmail());
+//                    logger.info("Members: Father Name " + member.getFatherName());
+//                }
+//        );
         return allMembers;
     }
 

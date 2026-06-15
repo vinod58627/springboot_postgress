@@ -1,12 +1,18 @@
 package com.example.demo.BasicConcepts;
 
+import com.example.demo.config.CustomInterceptor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class AppConfig {
+public class AppConfig implements WebMvcConfigurer {
+    @Autowired
+    private CustomInterceptor customInterceptor;
 
     @Bean
     public Engine engine() {
@@ -21,6 +27,14 @@ public class AppConfig {
     @Bean
     public Car car() {
         return new Car(engine());
+    }
+
+
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(customInterceptor)
+                .addPathPatterns("/**");
     }
 
 }

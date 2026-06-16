@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -56,6 +57,26 @@ public class PageServiceImpl implements PageService {
 
         Pageable pageable = PageRequest.of(pageNo, 3);
         Page<PageEntity> recordsTen = pageRepo.findAll(pageable);
+        System.out.println(recordsTen.getContent());
+        System.out.println(recordsTen.getTotalElements());
+        System.out.println(recordsTen.getTotalPages());
         return recordsTen;
+    }
+
+    @Override
+    public List<PageEntity> getThreeWithRecordsOnly(Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 3);
+        Page<PageEntity> recordsTen = pageRepo.findAll(pageable);
+        System.out.println(recordsTen.getContent());
+        System.out.println(recordsTen.getTotalElements());
+        System.out.println(recordsTen.getTotalPages());
+        return recordsTen.getContent();
+    }
+
+    @Override
+    public List<PageEntity> pagingNdSorting(Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 3, Sort.by("salary").descending());
+        Page<PageEntity> recordsTen = pageRepo.findAll(pageable);
+        return recordsTen.getContent();
     }
 }

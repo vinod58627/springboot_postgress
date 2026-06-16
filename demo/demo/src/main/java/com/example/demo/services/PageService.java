@@ -15,4 +15,8 @@ public interface PageService {
     String newRecord(@Valid AddPageRequestDto dto);
 
     Page<PageEntity> allGet(Integer pageNo);
+
+    List<PageEntity> getThreeWithRecordsOnly(Integer pageNo);
+
+    List<PageEntity> pagingNdSorting(Integer pageNo);
 }

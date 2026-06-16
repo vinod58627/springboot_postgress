@@ -24,15 +24,28 @@ public class PaginationController {
         List<PageAllResponseDto> users = pageService.getAll();
         return ResponseEntity.ok().body(users);
     }
+
     @GetMapping("/getAll/{pageNo}")
     public ResponseEntity<Page<PageEntity>> allGet(@PathVariable Integer pageNo) {
         Page<PageEntity> users = pageService.allGet(pageNo);
         return ResponseEntity.ok().body(users);
     }
 
+    @GetMapping("/getRecords/{pageNo}")
+    public ResponseEntity<List<PageEntity>> getThreeWithRecordsOnly(@PathVariable Integer pageNo) {
+        List<PageEntity> users = pageService.getThreeWithRecordsOnly(pageNo);
+        return ResponseEntity.ok().body(users);
+    }
+
     @PostMapping("/newRecord")
     public ResponseEntity<String> addNewRecord(@Valid @RequestBody AddPageRequestDto dto) {
         String users = pageService.newRecord(dto);
+        return ResponseEntity.ok().body(users);
+    }
+
+    @GetMapping("/pagingNdSorting/{pageNo}")
+    public ResponseEntity<List<PageEntity>> pagingNdSorting(@PathVariable Integer pageNo) {
+        List<PageEntity> users = pageService.pagingNdSorting(pageNo);
         return ResponseEntity.ok().body(users);
     }
 }

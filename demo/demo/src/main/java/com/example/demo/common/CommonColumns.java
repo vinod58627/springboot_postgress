@@ -16,7 +16,7 @@ public class CommonColumns {
     private Integer createdBy;
 
     @CreatedDate
-    @Column(name = "created_date")
+    @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "updated_by")
@@ -26,6 +26,6 @@ public class CommonColumns {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-    @Column(name="any_type")
+    @Column(name = "any_type")
     private String anyNew;
 }

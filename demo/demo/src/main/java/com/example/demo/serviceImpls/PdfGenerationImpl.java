@@ -148,14 +148,14 @@ public class PdfGenerationImpl implements PdfGenerationService {
 //                </html>
 //                """;
         try {
-            Document doc = new Document(PageSize.A4);
+            Document doc = new Document(PageSize.A3);
             PdfWriter writer = PdfWriter.getInstance(doc, out);
             writer.setPageEvent(new PageNumberEvent());
             doc.open();
             BaseColor color = new BaseColor(225, 32, 214);
             Font titleFont = new Font(
                     Font.FontFamily.HELVETICA,
-                    20,
+                    16,
                     Font.BOLD + Font.UNDERLINE,
                     color
             );
@@ -166,6 +166,11 @@ public class PdfGenerationImpl implements PdfGenerationService {
             doc.add(title);
             List<PageAllResponseDto> users = pageRepo.getAll();
 
+            Long totalSalary = pageRepo.getAll()
+                    .stream()
+                    .map(PageAllResponseDto::getSalary)
+                    .reduce(0L, (a, b) -> a + b);
+            System.out.println(totalSalary);
             StringBuilder rows = new StringBuilder();
 
             int sNo = 1;
@@ -201,7 +206,10 @@ public class PdfGenerationImpl implements PdfGenerationService {
                         border-collapse: collapse;
                     }
                     th {
-                        background-color: #dddddd;
+                        background-color: #17a185;
+                    }
+                    caption{
+                        color: #17a185;
                     }
                     th, td {
                         padding: 5px;
@@ -210,7 +218,11 @@ public class PdfGenerationImpl implements PdfGenerationService {
                     <body>
                     <h4 style="color:red"> %s</h4>
                     <table>
-                    <thead>
+                    <caption>Caption</caption>
+                    <thead style="color: white">
+                    <tr>
+                        <th colspan="5" style="text-align: center">Party Wise Deductions</th>
+                    </tr>
                         <tr>
                             <th>SlNo</th>
                             <th>Name</th>
@@ -222,10 +234,15 @@ public class PdfGenerationImpl implements PdfGenerationService {
                         <tbody>
                         %s
                         </tbody>
+                         <tfoot>
+                         <tr>
+                          <td colspan="5" style="text-align:right; background-color: #fff2f2">%s</td>
+                         </tr>
+                         </tfoot>
                     </table>
                     </body>
                     </html>
-                    """.formatted(reportTitle, rows.toString());
+                    """.formatted(reportTitle, rows.toString(), totalSalary);
             XMLWorkerHelper.getInstance().parseXHtml(
                     writer,
                     doc,
@@ -234,17 +251,17 @@ public class PdfGenerationImpl implements PdfGenerationService {
 
             doc.add(new Paragraph("Vinod Kumar"));
 
-            PdfPTable table = new PdfPTable(5);
-
-            for (int i = 1; i <= 1000; i++) {
-                table.addCell(String.valueOf(i));
-                table.addCell("Vinod");
-                table.addCell("vinod@gmail.com");
-                table.addCell("200000");
-                table.addCell("Kurnool");
-            }
-
-            doc.add(table);//Just Test It will devide page wise or not
+//            PdfPTable table = new PdfPTable(5);
+//
+//            for (int i = 1; i <= 1000; i++) {
+//                table.addCell(String.valueOf(i));
+//                table.addCell("Vinod");
+//                table.addCell("vinod@gmail.com");
+//                table.addCell("200000");
+//                table.addCell("Kurnool");
+//            }
+//
+//            doc.add(table);//Just Test It will divide page wise or not
             doc.close();
             return out.toByteArray();
         } catch (DocumentException | IOException e) {

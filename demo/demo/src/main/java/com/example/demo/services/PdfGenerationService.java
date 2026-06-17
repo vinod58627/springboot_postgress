@@ -4,4 +4,6 @@ public interface PdfGenerationService {
     byte[] generatePdf();
 
     byte[] samplePdf();
+
+    byte[] pdfWithHtml();
 }

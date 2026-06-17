@@ -1,15 +1,20 @@
 package com.example.demo.serviceImpls;
 
+import com.example.demo.common.PageNumberEvent;
 import com.example.demo.dto.PageAllResponseDto;
 import com.example.demo.repositories.PageRepo;
 import com.example.demo.services.PdfGenerationService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.itextpdf.text.PageSize;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
 import com.itextpdf.text.pdf.PdfWriter;
@@ -53,7 +58,7 @@ public class PdfGenerationImpl implements PdfGenerationService {
     public byte[] samplePdf() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            Document doc = new Document();
+            Document doc = new Document(PageSize.A4);
             PdfWriter.getInstance(doc, out);
             doc.open();
 //            Font have only 4 parameters 1.font family, 2.font size,3.int style, 4.BaseColor
@@ -105,6 +110,144 @@ public class PdfGenerationImpl implements PdfGenerationService {
             return out.toByteArray();
 
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public byte[] pdfWithHtml() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        String html = """
+//                <html>
+//                <style>
+//                table, th, td {
+//                  border: 1px solid black;
+//                  border-collapse: collapse;
+//                }
+//                </style>
+//                <body>
+//                    <h1 style='color:blue'>Employee Report</h1>
+//                    <p>Vinod Kumar</p>
+//                    <table style="width:100%">
+//                        <tr>
+//                            <th>SlNo</th>
+//                            <th>Name</th>
+//                            <th>Email</th>
+//                            <th>Salary</th>
+//                            <th>Branch</th>
+//                       </tr>
+//                        <tr>
+//                            <td>1</td>
+//                            <td>Vinod</td>
+//                            <td>vinod2gmail.com</td>
+//                            <td style="text-align:right">200000</td>
+//                            <td>Kurnool</td>
+//                        </tr>
+//                    </table>
+//                </body>
+//                </html>
+//                """;
+        try {
+            Document doc = new Document(PageSize.A4);
+            PdfWriter writer = PdfWriter.getInstance(doc, out);
+            writer.setPageEvent(new PageNumberEvent());
+            doc.open();
+            BaseColor color = new BaseColor(225, 32, 214);
+            Font titleFont = new Font(
+                    Font.FontFamily.HELVETICA,
+                    20,
+                    Font.BOLD + Font.UNDERLINE,
+                    color
+            );
+            Paragraph title = new Paragraph("Pdf Generation with Html Report", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setPaddingTop(0);
+            title.setSpacingAfter(10f);
+            doc.add(title);
+            List<PageAllResponseDto> users = pageRepo.getAll();
+
+            StringBuilder rows = new StringBuilder();
+
+            int sNo = 1;
+
+            for (PageAllResponseDto user : users) {
+
+                rows.append("""
+                        <tr>
+                            <td>%d</td>
+                            <td>%s</td>
+                            <td>%s</td>
+                            <td style="text-align:right">%s</td>
+                            <td>%s</td>
+                        </tr>
+                        """.formatted(
+                        sNo++,
+                        user.getName(),
+                        user.getEmail(),
+                        user.getSalary(),
+                        user.getBranch()
+                ));
+            }
+            String reportTitle = "Employee Salary Report";
+
+            String html = """
+                    <html>
+                    <style>
+                    table {
+                        width: 100%%;
+                    }
+                    table, th, td {
+                        border: 0.5px solid #dddddd;
+                        border-collapse: collapse;
+                    }
+                    th {
+                        background-color: #dddddd;
+                    }
+                    th, td {
+                        padding: 5px;
+                    }
+                    </style>
+                    <body>
+                    <h4 style="color:red"> %s</h4>
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>SlNo</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Salary</th>
+                            <th>Branch</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        %s
+                        </tbody>
+                    </table>
+                    </body>
+                    </html>
+                    """.formatted(reportTitle, rows.toString());
+            XMLWorkerHelper.getInstance().parseXHtml(
+                    writer,
+                    doc,
+                    new StringReader(html)
+            );
+
+            doc.add(new Paragraph("Vinod Kumar"));
+
+            PdfPTable table = new PdfPTable(5);
+
+            for (int i = 1; i <= 1000; i++) {
+                table.addCell(String.valueOf(i));
+                table.addCell("Vinod");
+                table.addCell("vinod@gmail.com");
+                table.addCell("200000");
+                table.addCell("Kurnool");
+            }
+
+            doc.add(table);//Just Test It will devide page wise or not
+            doc.close();
+            return out.toByteArray();
+        } catch (DocumentException | IOException e) {
             throw new RuntimeException(e);
         }
     }

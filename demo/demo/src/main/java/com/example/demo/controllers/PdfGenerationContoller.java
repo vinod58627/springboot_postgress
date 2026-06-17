@@ -44,6 +44,18 @@ public class PdfGenerationContoller {
                 .body(pdfBytes);
 
     }
+    @GetMapping("/pdfWithHtml")
+    public ResponseEntity<byte[]> pdfwithHtml() {
+
+        HttpHeaders headers = new HttpHeaders();
+        byte[] pdfBytes = pdfGenSer.pdfWithHtml();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=employee-report.pdf");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+
+    }
 
 
 }

@@ -207,6 +207,10 @@ public class PdfGenerationImpl implements PdfGenerationService {
                     }
                     th {
                         background-color: #17a185;
+                        text-align:center;
+                    }
+                    .note > th{
+                        background-color: #1abd9c;
                     }
                     caption{
                         color: #17a185;
@@ -223,7 +227,7 @@ public class PdfGenerationImpl implements PdfGenerationService {
                     <tr>
                         <th colspan="5" style="text-align: center">Party Wise Deductions</th>
                     </tr>
-                        <tr>
+                        <tr class="note">
                             <th>SlNo</th>
                             <th>Name</th>
                             <th>Email</th>

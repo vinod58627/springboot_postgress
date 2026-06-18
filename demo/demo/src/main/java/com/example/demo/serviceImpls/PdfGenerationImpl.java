@@ -15,7 +15,9 @@ import com.itextpdf.text.PageSize;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -117,6 +119,7 @@ public class PdfGenerationImpl implements PdfGenerationService {
     @Override
     public byte[] pdfWithHtml() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-IN"));
 //        String html = """
 //                <html>
 //                <style>
@@ -189,7 +192,7 @@ public class PdfGenerationImpl implements PdfGenerationService {
                         sNo++,
                         user.getName(),
                         user.getEmail(),
-                        user.getSalary(),
+                        formatter.format(user.getSalary()),
                         user.getBranch()
                 ));
             }
@@ -246,7 +249,7 @@ public class PdfGenerationImpl implements PdfGenerationService {
                     </table>
                     </body>
                     </html>
-                    """.formatted(reportTitle, rows.toString(), totalSalary);
+                    """.formatted(reportTitle, rows.toString(), formatter.format(totalSalary));
             XMLWorkerHelper.getInstance().parseXHtml(
                     writer,
                     doc,

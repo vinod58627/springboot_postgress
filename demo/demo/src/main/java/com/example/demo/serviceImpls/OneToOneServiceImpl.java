@@ -13,6 +13,8 @@ import com.example.demo.repositories.OneToOneRepo;
 import com.example.demo.services.OneToOneService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +29,10 @@ public class OneToOneServiceImpl implements OneToOneService {
     @Autowired
     private OneToManyRepo oneToManyRepo;
 
+    private final String CACHE_NAME = "employees";
+
     @Override
+    @CacheEvict(cacheNames = CACHE_NAME, allEntries = true)
     public String oneToOneSave(OneToOneRequestDto user) {
         try {
             OneToOneEntity one = new OneToOneEntity();
@@ -52,6 +57,7 @@ public class OneToOneServiceImpl implements OneToOneService {
     }
 
     @Override
+    @Cacheable(cacheNames = CACHE_NAME, key = "'allEmployees'")
     public List<OneToOneRequestDto> oneToOneGet() {
         try {
             List<OneToOneEntity> allUser = oneToOneRepo.findAll();
@@ -105,6 +111,29 @@ public class OneToOneServiceImpl implements OneToOneService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    @Cacheable(cacheNames = CACHE_NAME, key = "#id")
+    public OneToOneRequestDto oneToOneById(Integer id) {
+
+        OneToOneEntity user = oneToOneRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new OneToOneRequestDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getAge(),
+                user.getPincode(),
+                user.getNationality(),
+                new OneToOneRequestDto.OneToOneRequestChildDto(
+                        user.getFamily().getSno(),
+                        user.getFamily().getFatherName(),
+                        user.getFamily().getMobile(),
+                        user.getFamily().getMotherName()
+                )
+        );
     }
 
     @Override

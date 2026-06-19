@@ -18,6 +18,9 @@ public interface OneToOneService {
 
     String updatePinNdMobile(@Valid UpdatePinMobileRequestDto dto);
 
+    OneToOneRequestDto oneToOneById(Integer id);
+
     //One To Many Service
     String saveOtm(@Valid OneToManySaveDto otmDto);
+
 }

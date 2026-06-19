@@ -36,6 +36,12 @@ public class OneToOneController {
 
         return ResponseEntity.ok().body(users);
     }
+    @GetMapping("/getoto/{id}")
+    public ResponseEntity<OneToOneRequestDto> userBYId(@PathVariable Integer id) {
+        OneToOneRequestDto user = oneToOneService.oneToOneById(id);
+
+        return ResponseEntity.ok().body(user);
+    }
 
     @GetMapping("/getFromQuery")
     public ResponseEntity<List<OneToOneResponseDto>> getFromQuery() {

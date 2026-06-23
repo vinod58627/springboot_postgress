@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.dto.EntityManagerUpdateDto;
 import com.example.demo.dto.OneToOneRequestDto;
 import com.example.demo.dto.OneToOneResponseDto;
+import com.example.demo.dto.OneToOneResponseRecordDto;
 import com.example.demo.entities.OneToOneEntity;
 import jakarta.validation.Valid;
 
@@ -19,4 +20,6 @@ public interface EntityManagerService {
     List<OneToOneEntity> getAllUsers();
 
     List<Map<String, Object>> getAllUsersWithNativeQuery();
+
+    List<OneToOneResponseRecordDto> detailsFromQuery();
 }

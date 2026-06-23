@@ -2,7 +2,7 @@ package com.example.demo.serviceImpls;
 
 import com.example.demo.dto.EntityManagerUpdateDto;
 import com.example.demo.dto.OneToOneRequestDto;
-import com.example.demo.dto.OneToOneResponseDto;
+import com.example.demo.dto.OneToOneResponseRecordDto;
 import com.example.demo.entities.OneToOneChild;
 import com.example.demo.entities.OneToOneEntity;
 import com.example.demo.repositories.OneToOneRepo;
@@ -105,5 +105,37 @@ public class EntityManagerServiceImpl implements EntityManagerService {
                 .toList();
 
         return result;
+    }
+
+    @Override
+    public List<OneToOneResponseRecordDto> detailsFromQuery() {
+        String sql = """
+                select
+                    oto.id as id,
+                    oto.name as name,
+                    oto.age as age,
+                    oto.email as email,
+                    otoc.father_name as fatherName,
+                    otoc.mother_name as motherName,
+                    otoc.mobile as mobile
+                from sprbt.one_to_one oto
+                left join sprbt.one_to_one_child otoc
+                    on oto.c_sno = otoc.sno
+                """;
+        List<Object[]> results = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+        List<OneToOneResponseRecordDto> users = results.stream()
+                .map(row -> new OneToOneResponseRecordDto(
+                        ((Number) row[0]).intValue(),
+                        (String) row[1],
+                        ((Number) row[2]).intValue(),
+                        (String) row[3],
+                        (String) row[4],
+                        (String) row[5],
+                        (String) row[6]
+                ))
+                .toList();
+        return users;
     }
 }

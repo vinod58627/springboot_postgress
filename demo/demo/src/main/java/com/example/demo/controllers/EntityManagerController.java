@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.dto.EntityManagerUpdateDto;
 import com.example.demo.dto.OneToOneRequestDto;
 import com.example.demo.dto.OneToOneResponseDto;
+import com.example.demo.dto.OneToOneResponseRecordDto;
 import com.example.demo.entities.OneToOneEntity;
 import com.example.demo.services.EntityManagerService;
 import jakarta.validation.Valid;
@@ -46,6 +47,11 @@ public class EntityManagerController {
     @GetMapping("/getEmpNativeQuery")
     public ResponseEntity<List<Map<String, Object>>> matchNativeQuery(){
         List<Map<String, Object>> users = entSer.getAllUsersWithNativeQuery();
+        return ResponseEntity.ok().body(users);
+    }
+    @GetMapping("/detailsFromQuery")
+    public ResponseEntity<List<OneToOneResponseRecordDto>> detailsFromQuery(){
+        List<OneToOneResponseRecordDto> users = entSer.detailsFromQuery();
         return ResponseEntity.ok().body(users);
     }
 }
